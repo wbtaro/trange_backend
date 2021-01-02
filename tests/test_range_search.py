@@ -108,6 +108,7 @@ class SearchExecutorTest(unittest.TestCase):
         search_executor.build_query_string()
         search_executor.range_search()
         self.assertTrue(isinstance(search_executor.result['Stations'], list))
+        print(search_executor.result)
 
         # テスト用に設定したAPIキーを戻しておく
         os.environ['EKISPART_API_KEY'] = self.original_api_key
@@ -115,7 +116,7 @@ class SearchExecutorTest(unittest.TestCase):
     def test_lamda_handler(self):
         '''lambda_handlerのテスト兼、システムテスト'''
         event = {
-                'body': '{"SearchConditions": [{"BaseStationName": "津田沼", "UpperMinute": "20"}, {"BaseStationName": "千葉", "UpperMinute": "10"}]}'
+                "SearchConditions": [{"BaseStationName": "津田沼", "UpperMinute": "20"}, {"BaseStationName": "千葉", "UpperMinute": "10"}]
             }
         result = range_search.lambda_handler(event, {})
         self.assertEqual(result['StatusCode'], 200)
@@ -124,7 +125,7 @@ class SearchExecutorTest(unittest.TestCase):
     def test_lamda_handler_input_errors(self):
         '''lambda_handlerのテスト兼、システムテスト, 入力エラーのケース'''
         event = {
-                'body': '{"SearchConditions": [{"BaseStationName": "津田沼", "UpperMinute": "20"}, {"BaseStationName": "", "UpperMinute": "10"}]}'
+                "SearchConditions": [{"BaseStationName": "津田沼", "UpperMinute": "20"}, {"BaseStationName": "", "UpperMinute": "10"}]
             }
         result = range_search.lambda_handler(event, {})
         self.assertEqual(result['StatusCode'], 200)
