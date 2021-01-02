@@ -138,4 +138,4 @@ dmypy.json
 cython_debug/
 
 # zip for deploy
-function.zip
+*.zip

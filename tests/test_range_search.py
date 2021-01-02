@@ -59,7 +59,7 @@ class SearchExecutorTest(unittest.TestCase):
         ]
 
         for case in test_cases:
-            with self.subTest(f'{case}'):
+            with self.subTest(case):
                 conditions = [SearchCondition(condition) for condition in case['conditions']]
                 for condition in conditions:
                     condition.set_station_code()
@@ -108,29 +108,29 @@ class SearchExecutorTest(unittest.TestCase):
         search_executor.build_query_string()
         search_executor.range_search()
         self.assertTrue(isinstance(search_executor.result['Stations'], list))
-        print(search_executor.result)
 
         # テスト用に設定したAPIキーを戻しておく
         os.environ['EKISPART_API_KEY'] = self.original_api_key
 
     def test_lamda_handler(self):
         '''lambda_handlerのテスト兼、システムテスト'''
+        search_conditions = json.dumps({'SearchConditions': [{base_station_name: '津田沼', upper_minute: '20'}, {base_station_name: '千葉', upper_minute: '10'}]})
         event = {
-                "SearchConditions": [{"BaseStationName": "津田沼", "UpperMinute": "20"}, {"BaseStationName": "千葉", "UpperMinute": "10"}]
+                'body': search_conditions
             }
         result = range_search.lambda_handler(event, {})
-        self.assertEqual(result['StatusCode'], 200)
-        self.assertGreater(len(json.loads(result['Body'])['Stations']), 0)
+        self.assertEqual(result['statusCode'], 200)
+        self.assertGreater(len(json.loads(result['body'])['Stations']), 0)
 
     def test_lamda_handler_input_errors(self):
         '''lambda_handlerのテスト兼、システムテスト, 入力エラーのケース'''
+        search_conditions = json.dumps({'SearchConditions': [{base_station_name: '津田沼', upper_minute: '20'}, {base_station_name: '', upper_minute: '10'}]})
         event = {
-                "SearchConditions": [{"BaseStationName": "津田沼", "UpperMinute": "20"}, {"BaseStationName": "", "UpperMinute": "10"}]
+                'body': search_conditions
             }
         result = range_search.lambda_handler(event, {})
-        self.assertEqual(result['StatusCode'], 200)
-        self.assertEqual(json.loads(result['Body'])['ErrorMessage'], '検索条件2: 起点駅を入力してください')
+        self.assertEqual(result['statusCode'], 200)
+        self.assertEqual(json.loads(result['body'])['ErrorMessage'], '検索条件2: 起点駅を入力してください')
         
-
 if __name__ == '__main__':
     unittest.main()
