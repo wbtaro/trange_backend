@@ -134,6 +134,10 @@ def lambda_handler(event, context):
             if not condition.parameter_is_valid():
                 return {
                     'statusCode': 200,
+                    'headers': {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                    },
                     'body': json.dumps({'ErrorMessage': f'検索条件{i+1}: {condition.error_message}'})
                 }
             # DynamoDBは空文字を検索しようとすると怒るので、チェックを通過してから駅コードをセットする必要がある
@@ -145,6 +149,10 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
             'body': json.dumps(search_executor.result)
         }
 
@@ -153,5 +161,9 @@ def lambda_handler(event, context):
         logger.warning(event)
         return {
             'statusCode': 500,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
             'body': json.dumps({'ErrorMessage': 'システムエラー'})
         }
