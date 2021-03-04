@@ -37,6 +37,10 @@ def lambda_handler(event, context):
         return {
             "isBase64Encoded": False,
             'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
             'body': json.dumps(result)
         }
     except Exception as e:
@@ -45,5 +49,9 @@ def lambda_handler(event, context):
         return {
             "isBase64Encoded": False,
             'statusCode': 500,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+            },
             'body': json.dumps({'ErrorMessage': 'システムエラー'})
         }
